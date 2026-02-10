@@ -1,7 +1,4 @@
-import fetch from 'node-fetch'; // only if required
-
 export default function handler(req, res) {
-  // Allow Vapi to access
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -11,7 +8,13 @@ export default function handler(req, res) {
     return;
   }
 
-  // Fetch from Nango
+  // Check that NANGO_SECRET_KEY exists
+  if (!process.env.NANGO_SECRET_KEY) {
+    console.error('NANGO_SECRET_KEY is missing!');
+    res.status(500).json({ error: 'Missing NANGO_SECRET_KEY in environment variables' });
+    return;
+  }
+
   fetch('https://api.nango.dev/proxy/calendar/v3/users/me/calendarList', {
     headers: {
       Authorization: `Bearer ${process.env.NANGO_SECRET_KEY}`,
@@ -22,10 +25,10 @@ export default function handler(req, res) {
     .then((response) => response.json())
     .then((data) => {
       res.setHeader('Content-Type', 'application/json');
-      res.status(200).end(JSON.stringify(data)); // END the response
+      res.status(200).end(JSON.stringify(data));
     })
     .catch((error) => {
-      console.error(error);
+      console.error('Calendar fetch error:', error);
       res.status(500).json({ error: error.message });
     });
 }
