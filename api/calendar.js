@@ -1,18 +1,7 @@
 export default async function handler(req, res) {
-  // Allow Vapi to call this endpoint
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight OPTIONS request
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
   try {
     const response = await fetch(
-      'https://api.nango.dev/proxy/calendar/v3/users/me/calendarList',
+      'https://api.nango.dev/proxy/calendar/v3/users/me/calendarList?maxResults=10',
       {
         headers: {
           Authorization: `Bearer ${process.env.NANGO_SECRET_KEY}`,
@@ -24,7 +13,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 }
