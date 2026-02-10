@@ -1,4 +1,15 @@
 export default async function handler(req, res) {
+  // Allow Vapi to call this endpoint
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   try {
     const response = await fetch(
       'https://api.nango.dev/proxy/calendar/v3/users/me/calendarList',
