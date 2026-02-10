@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Ensure proper JSON response for Vapi
+    // Force proper JSON response for Vapi
     res.status(200).setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(data));
   } catch (error) {
